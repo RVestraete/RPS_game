@@ -2,70 +2,64 @@ const RPS = ["rock", "paper", "scissors"];
 
 function getComputerChoice() {
 
-    let randomIndex = Math.round(Math.random() * RPS.length);
+    let randomIndex = Math.floor(Math.random() * RPS.length);
     return RPS[randomIndex];
 
 }
 
+const container = document.querySelector('#container');
+const game = document.createElement('div');
+const currentScore = document.createElement("div");
+const result = document.createElement("div");
+const body = document.querySelector('body');
+game.classList.add("game");
+currentScore.classList.add("currentScore");
+result.classList.add("result");
+let flag = false;
 
-function getHumanChoice() {
+let humanScore = 0, computerScore = 0;
 
-    let choice = prompt("What is your choice ?");
+const buttons = document.querySelectorAll("button");
+buttons.forEach((button) => {
+    button.addEventListener("click", () => { playRound(button.id); });
+});
 
-    while(!RPS.includes(choice)){
+function playRound(humanChoice, computerChoice = getComputerChoice()) {
+    humanChoice = humanChoice.toLowerCase();
 
-        alert("Please select between rock, paper or scissors!")
-        choice = prompt("What is your choice ?");
+    if (flag) {
+        return
     }
-    return choice;
+
+    else if ((humanChoice === "rock" && computerChoice === "scissors") || (humanChoice === "scissors" && computerChoice === "paper") || (humanChoice === "paper" && computerChoice === "rock")) {
+        game.textContent = "You win! " + humanChoice + " beats " + computerChoice;
+        humanScore++;
+
+    } else if (humanChoice === computerChoice) {
+        game.textContent = "It's a draw! You both chose " + humanChoice;
+
+
+    } else {
+        game.textContent = "You lose! " + computerChoice + " beats " + humanChoice;
+        computerScore++;
+    }
+    currentScore.textContent = "Your score: " + humanScore + " / Computer score: " + computerScore;
+
+    container.appendChild(game);
+    container.appendChild(currentScore);
+
+    if (humanScore > 4) {
+        result.textContent = "You win! Your score is " + humanScore + " points against " + computerScore + " points for the computer!";
+        container.removeChild(game);
+        container.removeChild(currentScore);
+        container.appendChild(result);
+        flag = true;
+    }
+    if (computerScore > 4) {
+        result.textContent = "You lose! Your score is " + humanScore + " points against " + computerScore + " points for the computer!";
+        container.removeChild(game);
+        container.removeChild(currentScore);
+        container.appendChild(result);
+        flag = true;
+    }
 }
-
-
-function playGame() {
-
-    let humanScore = 0, computerScore = 0;
-    let roundNumber = 5;
-
-    function playRound(humanChoice, computerChoice) {
-        humanChoice = humanChoice.toLowerCase();
-
-        if ((humanChoice === "rock" && computerChoice === "scissors") || (humanChoice === "scissors" && computerChoice === "paper") || (humanChoice === "paper" && computerChoice === "rock")) {
-            console.log("You win! " + humanChoice + " beats " + computerChoice);
-            humanScore++;
-
-        } else if(humanChoice === computerChoice){
-            console.log("It's a draw! You both chose " + humanChoice)
-            
-
-        } else{
-            console.log("You lose! " + computerChoice + " beats " + humanChoice);
-            computerScore++;
-        }
-    }
-
-
-    for (let i = 0; i < roundNumber; i++) {
-        
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-
-        playRound(humanSelection, computerSelection);
-    }
-
-    console.log("############## END OF THE GAME ################")
-
-    if(humanScore > computerScore){
-        console.log("You win! Your score is " + humanScore + " points against " + computerScore + " points for the computer!");
-
-    } else if(humanScore < computerScore){
-        console.log("You lose! Your score is " + humanScore + " points against " + computerScore + " points for the computer!");
-
-    } else{
-        console.log("It's a draw! Your score is " + humanScore + " points!")
-
-    }
-
-}
-
-
-playGame()
